@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, AsyncIterator, Literal
 from openai._types import NOT_GIVEN
 from tqdm import auto as tqdm
 
-from art.client import Client, ExperimentalTrainingConfig
+from art.serverless.client import Client, ExperimentalTrainingConfig
 from art.utils.deploy_model import LoRADeploymentJob, LoRADeploymentProvider
 
 from .. import dev
@@ -128,8 +128,10 @@ class ServerlessBackend(Backend):
             model_id=model.id,
             trajectory_groups=trajectory_groups,
             experimental_config=ExperimentalTrainingConfig(
+                advantage_balance=dev_config.get("advantage_balance"),
                 learning_rate=config.learning_rate,
                 precalculate_logprobs=dev_config.get("precalculate_logprobs"),
+                scale_rewards=dev_config.get("scale_rewards"),
             ),
         )
         after: str | None = None

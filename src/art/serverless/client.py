@@ -19,7 +19,7 @@ from openai._version import __version__
 from openai.pagination import AsyncCursorPage
 from typing_extensions import override
 
-from .trajectories import TrajectoryGroup
+from ..trajectories import TrajectoryGroup
 
 ResponseT = TypeVar("ResponseT")
 
@@ -50,8 +50,10 @@ class DeleteCheckpointsResponse(BaseModel):
 
 
 class ExperimentalTrainingConfig(TypedDict, total=False):
+    advantage_balance: float | None
     learning_rate: float | None
     precalculate_logprobs: bool | None
+    scale_rewards: bool | None
 
 
 class TrainingJob(BaseModel):

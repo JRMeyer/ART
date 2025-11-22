@@ -69,11 +69,11 @@ def get_compute_loss_fn(trainer: "GRPOTrainer") -> Callable[..., torch.Tensor]:
                     # if param_group.get("weight_decay"):
                     #     param_group["weight_decay"] = config.weight_decay
 
-        if inputs["pixel_values"][0] is not None:
+        if inputs.get("pixel_values") and inputs["pixel_values"][0] is not None:
             inputs["pixel_values"] = inputs["pixel_values"][0]  # type: ignore
         else:
             del inputs["pixel_values"]  # type: ignore
-        if inputs["image_grid_thw"][0] is not None:
+        if inputs.get("image_grid_thw") and inputs["image_grid_thw"][0] is not None:
             inputs["image_grid_thw"] = inputs["image_grid_thw"][0]  # type: ignore
         else:
             del inputs["image_grid_thw"]  # type: ignore
@@ -114,9 +114,9 @@ def get_compute_loss_fn(trainer: "GRPOTrainer") -> Callable[..., torch.Tensor]:
         next_input_ids = shift_tensor(inputs["tokens"], 0)
         chunk_size = _config.get("logprob_calculation_chunk_size", 1024)
         # Assert that sequence length is evenly divisible by the chunk size
-        assert seq_len % chunk_size == 0, (
-            f"Sequence length ({seq_len}) must be evenly divisible by chunk size ({chunk_size})"
-        )
+        assert (
+            seq_len % chunk_size == 0
+        ), f"Sequence length ({seq_len}) must be evenly divisible by chunk size ({chunk_size})"
         os.environ["UNSLOTH_RETURN_HIDDEN_STATES"] = "1"
         forward_kwargs = {}
         if "pixel_values" in inputs:
@@ -371,7 +371,9 @@ def _calculate_logprobs(
         chunk_logits = torch.matmul(chunk_hs, lm_head_t)  # [B, chunk_size, V]
         chunk_selected_logits = torch.gather(
             chunk_logits, dim=-1, index=chunk_input_ids.unsqueeze(-1)
-        ).squeeze(-1)  # [B, chunk_size]
+        ).squeeze(
+            -1
+        )  # [B, chunk_size]
         chunk_logsumexp = torch.logsumexp(chunk_logits, dim=-1)  # [B, chunk_size]
         log_probs[:, i : i + chunk_size] = chunk_selected_logits - chunk_logsumexp
 
