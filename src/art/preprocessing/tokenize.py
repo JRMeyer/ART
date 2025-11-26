@@ -154,11 +154,16 @@ def tokenize_trajectory(
         return None
     messages_and_choices = history.messages_and_choices[: last_assistant_index + 1]
     messages = get_messages(messages_and_choices)
+    tools = (
+        [{"type": "function", "function": tool} for tool in history.tools]
+        if history.tools is not None
+        else None
+    )
     chat = cast(
         str,
         tokenizer.apply_chat_template(
             cast(list[dict], messages),
-            tools=history.tools,  # type: ignore
+            tools=tools,
             continue_final_message=True,
             tokenize=False,
         ),
@@ -167,7 +172,7 @@ def tokenize_trajectory(
         list[int],
         tokenizer.apply_chat_template(
             cast(list[dict], messages),
-            tools=history.tools,  # type: ignore
+            tools=tools,
             continue_final_message=True,
         ),
     )
@@ -193,7 +198,7 @@ def tokenize_trajectory(
                     for message_or_choice in messages_and_choices
                 ],
             ),
-            tools=history.tools,  # type: ignore
+            tools=tools,
             continue_final_message=True,
         ),
     )
@@ -204,6 +209,10 @@ def tokenize_trajectory(
             continue
         start = token_ids.index(sentinal_token_id)
         end = start + 1
+        try:
+            end_token_id = token_ids[end]
+        except IndexError:
+            end_token_id = None
         if isinstance(message, dict):
             content = message.get("content")
             assert isinstance(content, str)
@@ -247,6 +256,10 @@ def tokenize_trajectory(
                 token_logprob.logprob for token_logprob in token_logprobs
             )
             assistant_mask[start:end] = [1] * len(token_logprobs)
+            if token_ids[start + len(token_logprobs) - 1] == end_token_id:
+                token_ids.pop(start + len(token_logprobs))
+                logprobs.pop(start + len(token_logprobs))
+                assistant_mask.pop(start + len(token_logprobs))
     if image_processor:
         images: list[Image.Image] = []
         for message in messages_and_choices:
