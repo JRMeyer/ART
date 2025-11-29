@@ -1,8 +1,16 @@
+import warnings
 from typing import Literal
 
 from typing_extensions import TypedDict
 
 from .engine import EngineArgs
+
+ENGINE_INIT_ONLY_ARGS = {
+    "max_logprobs",
+    "gpu_memory_utilization",
+    "tensor_parallel_size",
+    "max_model_len",
+}
 
 
 def get_openai_server_config(
@@ -35,6 +43,16 @@ def get_openai_server_config(
         generation_config="vllm",
     )
     engine_args.update(config.get("engine_args", {}))
+    user_engine_args = config.get("engine_args", {})
+    ignored_args = set(user_engine_args.keys()) & ENGINE_INIT_ONLY_ARGS
+    if ignored_args:
+        warnings.warn(
+            f"OpenAIServerConfig.engine_args contains {ignored_args} which will be "
+            f"ignored. The vLLM engine is initialized by Unsloth before this config "
+            f"is applied. Use TrainableModel._internal_config.engine_args instead.",
+            UserWarning,
+            stacklevel=2,
+        )
     return OpenAIServerConfig(
         log_file=log_file, server_args=server_args, engine_args=engine_args
     )
