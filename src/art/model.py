@@ -1,8 +1,17 @@
-from typing import TYPE_CHECKING, Generic, Iterable, Optional, TypeVar, cast, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Iterable,
+    Optional,
+    TypeVar,
+    cast,
+    overload,
+)
 
 import httpx
 from openai import AsyncOpenAI, DefaultAsyncHttpxClient
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from typing_extensions import Never
 
 from . import dev
@@ -278,6 +287,19 @@ class TrainableModel(Model[ModelConfig], Generic[ModelConfig]):
         if _internal_config is not None:
             # Bypass BaseModel __setattr__ to allow setting private attr
             object.__setattr__(self, "_internal_config", _internal_config)
+
+    @model_validator(mode="wrap")
+    @classmethod
+    def _preserve_internal_config(
+        cls, data: Any, handler: Any
+    ) -> "TrainableModel[ModelConfig]":
+        internal_config = None
+        if isinstance(data, dict) and "_internal_config" in data:
+            internal_config = data.pop("_internal_config")
+        model = handler(data)
+        if internal_config is not None:
+            object.__setattr__(model, "_internal_config", internal_config)
+        return model
 
     @overload
     def __new__(

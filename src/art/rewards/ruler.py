@@ -20,6 +20,7 @@ from pydantic import BaseModel, Field
 from rich import print
 
 import art
+from art.utils.strip_logprobs import strip_logprobs
 
 
 class TrajectoryScore(BaseModel):
@@ -287,9 +288,10 @@ async def ruler_score_group(
         new_trajectories.append(new_traj)
 
     # Extract message lists and preserve original rewards for comparison
+    # Strip logprobs to avoid sending huge token probability data to the judge
     message_lists: list[list[ChatCompletionMessageParam]] = []
     for traj in new_trajectories:
-        message_lists.append(traj.messages())
+        message_lists.append(strip_logprobs(traj.messages()))
         traj.metrics["independent_reward"] = traj.reward
 
     try:

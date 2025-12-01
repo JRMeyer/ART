@@ -163,7 +163,7 @@ def tokenize_trajectory(
         str,
         tokenizer.apply_chat_template(
             cast(list[dict], messages),
-            tools=tools,
+            tools=tools,  # type: ignore
             continue_final_message=True,
             tokenize=False,
         ),
@@ -172,7 +172,7 @@ def tokenize_trajectory(
         list[int],
         tokenizer.apply_chat_template(
             cast(list[dict], messages),
-            tools=tools,
+            tools=tools,  # type: ignore
             continue_final_message=True,
         ),
     )
@@ -198,7 +198,7 @@ def tokenize_trajectory(
                     for message_or_choice in messages_and_choices
                 ],
             ),
-            tools=tools,
+            tools=tools,  # type: ignore
             continue_final_message=True,
         ),
     )
@@ -221,7 +221,15 @@ def tokenize_trajectory(
                 add_special_tokens=False,
             )
             token_ids[start:end] = content_token_ids
-            logprobs[start:end] = [float("nan")] * len(content_token_ids)
+            dict_logprobs = message.get("logprobs")
+            if dict_logprobs is None:
+                logprobs[start:end] = [float("nan")] * len(content_token_ids)
+            elif "content" in dict_logprobs and dict_logprobs["content"]:
+                logprobs[start:end] = [lp["logprob"] for lp in dict_logprobs["content"]]
+            else:
+                raise ValueError(
+                    f"Message has 'logprobs' key but content is missing or empty: {dict_logprobs}"
+                )
             assistant_mask[start:end] = [1] * len(content_token_ids)
         else:
             choice = message
