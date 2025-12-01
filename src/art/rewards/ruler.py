@@ -14,14 +14,13 @@ from textwrap import dedent
 from typing import List
 
 from litellm import acompletion
-
-from art.utils.strip_logprobs import strip_logprobs
 from litellm.types.utils import ModelResponse
 from openai.types.chat.chat_completion_message_param import ChatCompletionMessageParam
 from pydantic import BaseModel, Field
 from rich import print
 
 import art
+from art.utils.strip_logprobs import strip_logprobs
 
 
 class TrajectoryScore(BaseModel):
