@@ -16,6 +16,9 @@ class Loss(BaseModel):
     mean_kl: torch.Tensor
     mean_entropy: torch.Tensor | None
     probs_corr: torch.Tensor
+    frac_old_logprobs_valid: float
+    mean_importance_ratio: torch.Tensor
+    clip_fraction: torch.Tensor
 
 
 def loss_fn(
@@ -32,6 +35,9 @@ def loss_fn(
     )
     weights = shift_tensor(inputs["weights"], 0.0)
     old_logprobs_mask = ~torch.isnan(old_logprobs)
+    frac_old_logprobs_valid = (
+        old_logprobs_mask.float().sum() / (old_logprobs.numel() + 1e-6)
+    ).item()
     probs_corr = torch.corrcoef(
         torch.stack(
             [
@@ -77,15 +83,23 @@ def loss_fn(
         )
     if tau := experimental_config.get("kimi_k2_tau", None):
         advantages -= tau * logprob_diff.detach()
+    clipped_ratio = torch.clip(prob_ratio, 1 - epsilon, 1 + epsilon_high)
+    is_clipped = (prob_ratio < 1 - epsilon) | (prob_ratio > 1 + epsilon_high)
+    clip_fraction = (is_clipped.float() * assistant_mask).sum() / (
+        assistant_mask.sum() + 1e-6
+    )
+    mean_importance_ratio = (prob_ratio * assistant_mask).sum() / (
+        assistant_mask.sum() + 1e-6
+    )
     if experimental_config.get("ppo", True):
         policy_loss = -torch.min(
             prob_ratio * advantages,
-            torch.clip(prob_ratio, 1 - epsilon, 1 + epsilon_high) * advantages,
+            clipped_ratio * advantages,
         )
     else:
         # Modified REINFORCE or Clipped IS-weight Policy Optimization (CISPO)
         policy_loss = -(
-            torch.clip(prob_ratio.detach(), 1 - epsilon, 1 + epsilon_high)
+            clipped_ratio.detach()
             * advantages
             * new_logprobs
         )
@@ -123,6 +137,9 @@ def loss_fn(
         mean_kl=mean_kl,
         mean_entropy=mean_entropy,
         probs_corr=probs_corr,
+        frac_old_logprobs_valid=frac_old_logprobs_valid,
+        mean_importance_ratio=mean_importance_ratio,
+        clip_fraction=clip_fraction,
     )
 
 

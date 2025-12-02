@@ -167,7 +167,10 @@ def get_compute_loss_fn(trainer: "GRPOTrainer") -> Callable[..., torch.Tensor]:
         trainer._metrics["train"]["learning_rate"].append(config.learning_rate)
         trainer._metrics["train"]["policy_loss"].append(loss.mean_policy_loss.item())
         if loss.mean_entropy is not None:
-            trainer._metrics["train"]["entropy"].append(loss.mean_entropy.item())  # type: ignore
+            trainer._metrics["train"]["entropy"].append(loss.mean_entropy.item())
+        trainer._metrics["train"]["frac_old_logprobs_valid"].append(loss.frac_old_logprobs_valid)
+        trainer._metrics["train"]["mean_importance_ratio"].append(loss.mean_importance_ratio.item())
+        trainer._metrics["train"]["clip_fraction"].append(loss.clip_fraction.item())
         if config.beta > 0.0:
             trainer._metrics["train"]["kl_div"].append(loss.mean_kl.item())
         return loss.mean_policy_loss + config.beta * loss.mean_kl  # type: ignore
