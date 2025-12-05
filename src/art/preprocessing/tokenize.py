@@ -216,21 +216,46 @@ def tokenize_trajectory(
         if isinstance(message, dict):
             content = message.get("content")
             assert isinstance(content, str)
-            content_token_ids = tokenizer.encode(
-                content,
-                add_special_tokens=False,
-            )
-            token_ids[start:end] = content_token_ids
+            msg_token_ids = message.get("token_ids")
             dict_logprobs = message.get("logprobs")
-            if dict_logprobs is None:
-                logprobs[start:end] = [float("nan")] * len(content_token_ids)
-            elif "content" in dict_logprobs and dict_logprobs["content"]:
-                logprobs[start:end] = [lp["logprob"] for lp in dict_logprobs["content"]]
+            if (
+                msg_token_ids is not None
+                and dict_logprobs
+                and "values" in dict_logprobs
+            ):
+                token_ids[start:end] = msg_token_ids
+                logprobs[start:end] = dict_logprobs["values"]
+                assistant_mask[start:end] = [1] * len(msg_token_ids)
+            elif (
+                dict_logprobs
+                and "content" in dict_logprobs
+                and dict_logprobs["content"]
+            ):
+                token_logprobs = dict_logprobs["content"]
+                try:
+                    token_ids[start:end] = [
+                        int(lp["token"].split(":")[1]) for lp in token_logprobs
+                    ]
+                except (IndexError, ValueError, KeyError):
+                    token_ids[start:end] = [
+                        token_id if token_id is not None else tokenizer.eos_token_id
+                        for token_id in tokenizer.convert_tokens_to_ids(
+                            [
+                                lp.get("token") or tokenizer.eos_token
+                                for lp in token_logprobs
+                            ]
+                        )
+                    ]
+                logprobs[start:end] = [lp["logprob"] for lp in token_logprobs]
+                assistant_mask[start:end] = [1] * len(token_logprobs)
             else:
-                raise ValueError(
-                    f"Message has 'logprobs' key but content is missing or empty: {dict_logprobs}"
+                content_token_ids = tokenizer.encode(
+                    content,
+                    add_special_tokens=False,
                 )
-            assistant_mask[start:end] = [1] * len(content_token_ids)
+                token_ids[start:end] = content_token_ids
+                logprobs[start:end] = [float("nan")] * len(content_token_ids)
+                assistant_mask[start:end] = [1] * len(content_token_ids)
         else:
             choice = message
             assert choice.logprobs or allow_training_without_logprobs, (
