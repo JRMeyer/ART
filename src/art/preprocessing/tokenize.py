@@ -159,23 +159,28 @@ def tokenize_trajectory(
         if history.tools is not None
         else None
     )
-    chat = cast(
-        str,
-        tokenizer.apply_chat_template(
-            cast(list[dict], messages),
-            tools=tools,  # type: ignore
-            continue_final_message=True,
-            tokenize=False,
-        ),
-    )
-    original_token_ids = cast(
-        list[int],
-        tokenizer.apply_chat_template(
-            cast(list[dict], messages),
-            tools=tools,  # type: ignore
-            continue_final_message=True,
-        ),
-    )
+    try:
+        chat = cast(
+            str,
+            tokenizer.apply_chat_template(
+                cast(list[dict], messages),
+                tools=tools,  # type: ignore
+                continue_final_message=True,
+                tokenize=False,
+            ),
+        )
+        original_token_ids = cast(
+            list[int],
+            tokenizer.apply_chat_template(
+                cast(list[dict], messages),
+                tools=tools,  # type: ignore
+                continue_final_message=True,
+            ),
+        )
+    except ValueError as e:
+        if "continue_final_message" in str(e):
+            return None
+        raise
     sentinal_token_id = max(
         set(range(cast(int, tokenizer.vocab_size))) - set(original_token_ids)
     )
