@@ -223,11 +223,19 @@ def tokenize_trajectory(
             assert isinstance(content, str)
             msg_token_ids = message.get("token_ids")
             dict_logprobs = message.get("logprobs")
+            print(f"[TOKENIZE DEBUG] Processing assistant dict message:")
+            print(f"  msg_token_ids is not None: {msg_token_ids is not None}")
+            print(f"  dict_logprobs truthy: {bool(dict_logprobs)}")
+            if dict_logprobs:
+                print(f"  dict_logprobs type: {type(dict_logprobs).__name__}")
+                print(f"  dict_logprobs keys: {list(dict_logprobs.keys()) if isinstance(dict_logprobs, dict) else 'N/A'}")
+                print(f"  'values' in dict_logprobs: {'values' in dict_logprobs if isinstance(dict_logprobs, dict) else 'N/A'}")
             if (
                 msg_token_ids is not None
                 and dict_logprobs
                 and "values" in dict_logprobs
             ):
+                print(f"  -> Using provided token_ids ({len(msg_token_ids)}) and logprobs.values ({len(dict_logprobs['values'])})")
                 token_ids[start:end] = msg_token_ids
                 logprobs[start:end] = dict_logprobs["values"]
                 assistant_mask[start:end] = [1] * len(msg_token_ids)
@@ -254,6 +262,7 @@ def tokenize_trajectory(
                 logprobs[start:end] = [lp["logprob"] for lp in token_logprobs]
                 assistant_mask[start:end] = [1] * len(token_logprobs)
             else:
+                print(f"  -> FALLBACK: re-tokenizing content, logprobs will be NaN")
                 content_token_ids = tokenizer.encode(
                     content,
                     add_special_tokens=False,
