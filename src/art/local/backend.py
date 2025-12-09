@@ -412,6 +412,26 @@ class LocalBackend(Backend):
         dev_config: dev.TrainConfig,
         verbose: bool = False,
     ) -> AsyncIterator[dict[str, float]]:
+        print("[DEBUG _train_model] Received trajectory_groups")
+        for tg_idx, tg in enumerate(trajectory_groups):
+            rewards = [t.reward for t in tg.trajectories]
+            print(f"[DEBUG _train_model] tg={tg_idx} rewards={rewards}")
+            for traj_idx, traj in enumerate(tg.trajectories):
+                for msg_idx, msg in enumerate(traj.messages_and_choices):
+                    if isinstance(msg, dict) and msg.get("role") == "assistant":
+                        print(f"[DEBUG _train_model] tg={tg_idx} traj={traj_idx} msg={msg_idx}")
+                        print(f"[DEBUG _train_model] Assistant msg keys: {list(msg.keys())}")
+                        print(f"[DEBUG _train_model] has logprobs: {'logprobs' in msg}")
+                        if 'logprobs' in msg:
+                            lp = msg['logprobs']
+                            print(f"[DEBUG _train_model] logprobs type: {type(lp)}, truthy: {bool(lp)}")
+                            if isinstance(lp, dict):
+                                print(f"[DEBUG _train_model] logprobs keys: {list(lp.keys())}")
+                                if 'values' in lp:
+                                    print(f"[DEBUG _train_model] logprobs['values'] len: {len(lp['values'])}")
+                        print(f"[DEBUG _train_model] token_ids present: {'token_ids' in msg and msg.get('token_ids') is not None}")
+                        if 'token_ids' in msg and msg.get('token_ids') is not None:
+                            print(f"[DEBUG _train_model] token_ids len: {len(msg['token_ids'])}")
         if verbose:
             print("Starting _train_model")
         service = await self._get_service(model)
