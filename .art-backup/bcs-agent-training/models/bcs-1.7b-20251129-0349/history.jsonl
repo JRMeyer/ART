@@ -1,0 +1,48 @@
+{"val/reward_std_dev": 0, "step": 0, "recorded_at": "2025-11-29T03:11:09.220096"}
+{"train/reward_std_dev": 0, "step": 0, "recorded_at": "2025-11-29T03:11:09.243207"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 1, "recorded_at": "2025-11-29T03:11:11.626159"}
+{"val/reward_std_dev": 0, "step": 1, "recorded_at": "2025-11-29T03:29:23.226513"}
+{"train/reward_std_dev": 0, "step": 1, "recorded_at": "2025-11-29T03:29:23.250440"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 2, "recorded_at": "2025-11-29T03:29:23.250686"}
+{"val/reward_std_dev": 0, "step": 2, "recorded_at": "2025-11-29T03:48:39.251280"}
+{"train/reward_std_dev": 0, "step": 2, "recorded_at": "2025-11-29T03:48:39.277779"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 3, "recorded_at": "2025-11-29T03:48:39.278002"}
+{"val/reward_std_dev": 0, "step": 3, "recorded_at": "2025-11-29T04:09:21.276435"}
+{"train/reward_std_dev": 0, "step": 3, "recorded_at": "2025-11-29T04:09:21.299554"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 4, "recorded_at": "2025-11-29T04:09:21.299796"}
+{"val/reward_std_dev": 0, "step": 4, "recorded_at": "2025-11-29T04:32:40.580711"}
+{"train/reward_std_dev": 0, "step": 4, "recorded_at": "2025-11-29T04:32:40.604184"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 5, "recorded_at": "2025-11-29T04:32:40.604397"}
+{"val/reward_std_dev": 0, "step": 5, "recorded_at": "2025-11-29T04:57:57.341758"}
+{"train/reward_std_dev": 0, "step": 5, "recorded_at": "2025-11-29T04:57:57.364855"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 6, "recorded_at": "2025-11-29T04:57:57.365074"}
+{"val/reward_std_dev": 0, "step": 6, "recorded_at": "2025-11-29T05:19:06.493596"}
+{"train/reward_std_dev": 0, "step": 6, "recorded_at": "2025-11-29T05:19:06.519790"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 7, "recorded_at": "2025-11-29T05:19:06.520017"}
+{"val/reward_std_dev": 0, "step": 7, "recorded_at": "2025-11-29T05:44:38.199036"}
+{"train/reward_std_dev": 0, "step": 7, "recorded_at": "2025-11-29T05:44:38.223460"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 8, "recorded_at": "2025-11-29T05:44:38.223699"}
+{"val/reward_std_dev": 0, "step": 8, "recorded_at": "2025-11-29T06:07:08.664188"}
+{"train/reward_std_dev": 0, "step": 8, "recorded_at": "2025-11-29T06:07:08.691701"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 9, "recorded_at": "2025-11-29T06:07:08.691944"}
+{"val/reward_std_dev": 0, "step": 9, "recorded_at": "2025-11-29T06:30:24.063425"}
+{"train/reward_std_dev": 0, "step": 9, "recorded_at": "2025-11-29T06:30:24.088096"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 10, "recorded_at": "2025-11-29T06:30:24.088326"}
+{"val/reward_std_dev": 0, "step": 10, "recorded_at": "2025-11-29T06:51:29.334820"}
+{"train/reward_std_dev": 0, "step": 10, "recorded_at": "2025-11-29T06:51:29.362314"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 11, "recorded_at": "2025-11-29T06:51:29.362544"}
+{"val/reward_std_dev": 0, "step": 11, "recorded_at": "2025-11-29T07:15:09.828436"}
+{"train/reward_std_dev": 0, "step": 11, "recorded_at": "2025-11-29T07:15:09.853087"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 12, "recorded_at": "2025-11-29T07:15:09.853306"}
+{"val/reward_std_dev": 0, "step": 12, "recorded_at": "2025-11-29T07:43:45.541999"}
+{"train/reward_std_dev": 0, "step": 12, "recorded_at": "2025-11-29T07:43:45.564881"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 13, "recorded_at": "2025-11-29T07:43:45.565092"}
+{"val/reward_std_dev": 0, "step": 13, "recorded_at": "2025-11-29T08:02:20.947115"}
+{"train/reward_std_dev": 0, "step": 13, "recorded_at": "2025-11-29T08:02:20.969138"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 14, "recorded_at": "2025-11-29T08:02:20.969361"}
+{"val/reward_std_dev": 0, "step": 14, "recorded_at": "2025-11-29T08:22:23.680934"}
+{"train/reward_std_dev": 0, "step": 14, "recorded_at": "2025-11-29T08:22:23.705478"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 15, "recorded_at": "2025-11-29T08:22:23.705719"}
+{"val/reward_std_dev": 0, "step": 15, "recorded_at": "2025-11-29T08:44:27.209708"}
+{"train/reward_std_dev": 0, "step": 15, "recorded_at": "2025-11-29T08:44:27.233106"}
+{"train/num_groups_submitted": 0, "train/num_groups_trainable": 0, "step": 16, "recorded_at": "2025-11-29T08:44:27.233385"}

@@ -142,7 +142,7 @@ def tokenize_trajectory(
         if (
             isinstance(message, dict)
             and message["role"] == "assistant"
-            and allow_training_without_logprobs
+            and (message.get("logprobs") or allow_training_without_logprobs)
         ):
             last_assistant_index = i
         elif not isinstance(message, dict) and (
@@ -224,8 +224,10 @@ def tokenize_trajectory(
             msg_token_ids = message.get("token_ids")
             dict_logprobs = message.get("logprobs")
             print(f"[TOKENIZE DEBUG] Processing assistant dict message:")
+            print(f"  message keys: {list(message.keys())}")
             print(f"  msg_token_ids is not None: {msg_token_ids is not None}")
             print(f"  dict_logprobs truthy: {bool(dict_logprobs)}")
+            print(f"  dict_logprobs value: {repr(dict_logprobs)[:200] if dict_logprobs else repr(dict_logprobs)}")
             if dict_logprobs:
                 print(f"  dict_logprobs type: {type(dict_logprobs).__name__}")
                 print(f"  dict_logprobs keys: {list(dict_logprobs.keys()) if isinstance(dict_logprobs, dict) else 'N/A'}")

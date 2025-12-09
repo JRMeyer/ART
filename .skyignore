@@ -1,5 +1,7 @@
 __pycache__/
 .art/
+.art-backup/
+*.safetensors
 # .env
 .venv/
 grpo_trainer_lora_model/
