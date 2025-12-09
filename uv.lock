@@ -4124,9 +4124,11 @@ name = "openpipe-art"
 version = "0.5.3"
 source = { editable = "." }
 dependencies = [
+    { name = "fastapi" },
     { name = "litellm" },
     { name = "openai" },
     { name = "typer" },
+    { name = "uvicorn", extra = ["standard"] },
     { name = "weave" },
 ]
 
@@ -4188,6 +4190,7 @@ requires-dist = [
     { name = "accelerate", marker = "extra == 'backend'", specifier = "==1.7.0" },
     { name = "awscli", marker = "extra == 'backend'", specifier = ">=1.38.1" },
     { name = "bitsandbytes", marker = "extra == 'backend'", specifier = ">=0.45.2" },
+    { name = "fastapi" },
     { name = "gql", marker = "extra == 'backend'", specifier = "<4" },
     { name = "hf-xet", marker = "extra == 'backend'", specifier = ">=1.1.0" },
     { name = "langchain-core", marker = "extra == 'langgraph'", specifier = ">=0.3.51" },
@@ -4216,6 +4219,7 @@ requires-dist = [
     { name = "typer", specifier = ">=0.15.2" },
     { name = "unsloth", marker = "extra == 'backend'", specifier = "==2025.10.3" },
     { name = "unsloth-zoo", marker = "extra == 'backend'", specifier = "==2025.10.3" },
+    { name = "uvicorn", extras = ["standard"] },
     { name = "vllm", marker = "extra == 'backend'", specifier = ">=0.9.2,<=0.10.0" },
     { name = "wandb", marker = "extra == 'backend'", specifier = "==0.22.1" },
     { name = "weave", specifier = ">=0.51.51" },

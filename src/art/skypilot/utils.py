@@ -52,7 +52,7 @@ async def wait_for_task_to_start(cluster_name: str, task_name: str) -> None:
     task_status = await get_task_status(cluster_name, task_name)
 
     num_checks = 0
-    while num_checks < 12:
+    while num_checks < 120:
         task_status = await get_task_status(cluster_name, task_name)
         if task_status is None:
             raise ValueError(f"Task {task_name} not found in cluster {cluster_name}")
@@ -62,7 +62,7 @@ async def wait_for_task_to_start(cluster_name: str, task_name: str) -> None:
         num_checks += 1
 
     raise ValueError(
-        f"Task {task_name} in cluster {cluster_name} failed to start within 60s"
+        f"Task {task_name} in cluster {cluster_name} failed to start within 600s"
     )
 
 

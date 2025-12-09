@@ -9,6 +9,8 @@ dependencies = [
     "typer>=0.15.2",
     "litellm==1.74.1",
     "weave>=0.51.51",
+    "uvicorn[standard]",
+    "fastapi",
 ]
 
 [project.optional-dependencies]
