@@ -52,9 +52,11 @@ def tokenize_trajectory_groups(
     shuffle_group_trajectories: bool = True,
     image_processor: BaseImageProcessor | None = None,
 ) -> Generator["TokenizedResult", None, None]:
-    for group in trajectory_groups:
+    print(f"[TOKENIZE_GROUPS] Starting with {len(trajectory_groups)} groups")
+    for group_idx, group in enumerate(trajectory_groups):
         if not group:
             continue
+        print(f"[TOKENIZE_GROUPS] Group {group_idx}: {len(group)} trajectories")
         results: list[TokenizedResult] = []
         # Calculate GRPO group mean and standard deviation
         reward_mean = sum(trajectory.reward for trajectory in group) / len(group)
@@ -62,13 +64,16 @@ def tokenize_trajectory_groups(
             sum((trajectory.reward - reward_mean) ** 2 for trajectory in group)
             / len(group)
         )
-        for trajectory in group:
+        print(f"[TOKENIZE_GROUPS] Group {group_idx}: rewards={[t.reward for t in group]}, mean={reward_mean}, std={reward_std}")
+        for traj_idx, trajectory in enumerate(group):
             # Calculate GRPO advantage for this trajectory
             advantage = trajectory.reward - reward_mean
             if scale_rewards:
                 advantage /= reward_std + 1e-6
+            print(f"[TOKENIZE_GROUPS] Group {group_idx} Traj {traj_idx}: raw_adv={trajectory.reward - reward_mean}, scaled_adv={advantage}")
             # Skip trajectories with no advantage
             if advantage == 0:
+                print(f"[TOKENIZE_GROUPS] Group {group_idx} Traj {traj_idx}: SKIPPED (advantage=0)")
                 continue
             trajectory_results: list[TokenizedResult] = []
             for history in [
@@ -138,7 +143,12 @@ def tokenize_trajectory(
     """
     # Find the index of the last assistant message
     last_assistant_index = -1
+    print(f"[TOKENIZE FIRST LOOP] Checking {len(history.messages_and_choices)} messages")
     for i, message in enumerate(history.messages_and_choices):
+        if isinstance(message, dict):
+            print(f"[TOKENIZE FIRST LOOP] msg {i}: dict, role={message.get('role')}, has_logprobs={bool(message.get('logprobs'))}")
+        else:
+            print(f"[TOKENIZE FIRST LOOP] msg {i}: Choice obj, has_logprobs={bool(message.logprobs if hasattr(message, 'logprobs') else None)}")
         if (
             isinstance(message, dict)
             and message["role"] == "assistant"
@@ -149,8 +159,10 @@ def tokenize_trajectory(
             message.logprobs or allow_training_without_logprobs
         ):
             last_assistant_index = i
+    print(f"[TOKENIZE FIRST LOOP] last_assistant_index={last_assistant_index}")
     # If there are no trainable assistant messages, return None
     if last_assistant_index == -1:
+        print("[TOKENIZE FIRST LOOP] -> Returning None (no trainable messages)")
         return None
     messages_and_choices = history.messages_and_choices[: last_assistant_index + 1]
     messages = get_messages(messages_and_choices)
