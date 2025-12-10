@@ -194,6 +194,15 @@ class LocalBackend(Backend):
             except Exception:
                 self._image_processors[model.base_model] = None
         tokenizer = self._tokenizers[model.base_model]
+        print("[DEBUG _get_packed_tensors] Right before tokenize_trajectory_groups")
+        for tg_idx, tg in enumerate(trajectory_groups):
+            for traj_idx, traj in enumerate(tg.trajectories):
+                print(f"[DEBUG _get_packed_tensors] tg={tg_idx} traj={traj_idx} id={id(traj)}")
+                print(f"[DEBUG _get_packed_tensors] messages_and_choices id={id(traj.messages_and_choices)}")
+                for msg_idx, msg in enumerate(traj.messages_and_choices):
+                    if isinstance(msg, dict) and msg.get("role") == "assistant":
+                        print(f"[DEBUG _get_packed_tensors] msg {msg_idx} id={id(msg)} keys={list(msg.keys())}")
+                        print(f"[DEBUG _get_packed_tensors] msg {msg_idx} has logprobs: {'logprobs' in msg and bool(msg.get('logprobs'))}")
         tokenized_results = list(
             tokenize_trajectory_groups(
                 tokenizer,

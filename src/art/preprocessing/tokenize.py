@@ -76,6 +76,12 @@ def tokenize_trajectory_groups(
                 print(f"[TOKENIZE_GROUPS] Group {group_idx} Traj {traj_idx}: SKIPPED (advantage=0)")
                 continue
             trajectory_results: list[TokenizedResult] = []
+            print(f"[TOKENIZE_GROUPS] About to iterate. trajectory type: {type(trajectory).__name__}")
+            print(f"[TOKENIZE_GROUPS] trajectory.messages_and_choices has {len(trajectory.messages_and_choices)} items")
+            for msg_idx, msg in enumerate(trajectory.messages_and_choices):
+                if isinstance(msg, dict) and msg.get("role") == "assistant":
+                    print(f"[TOKENIZE_GROUPS] traj msg {msg_idx} keys: {list(msg.keys())}")
+                    print(f"[TOKENIZE_GROUPS] traj msg {msg_idx} has logprobs: {'logprobs' in msg and bool(msg.get('logprobs'))}")
             for history in [trajectory, *trajectory.additional_histories]:
                 if result := tokenize_trajectory(
                     tokenizer,
@@ -135,6 +141,17 @@ def tokenize_trajectory(
     """
     Tokenizes a trajectory and returns a TokenizedResult.
     """
+    print(f"[TOKENIZE_TRAJ] Received history type: {type(history).__name__}")
+    print(f"[TOKENIZE_TRAJ] history id: {id(history)}")
+    print(f"[TOKENIZE_TRAJ] messages_and_choices id: {id(history.messages_and_choices)}")
+    if len(history.messages_and_choices) > 0:
+        for msg_idx, msg in enumerate(history.messages_and_choices):
+            if isinstance(msg, dict) and msg.get("role") == "assistant":
+                print(f"[TOKENIZE_TRAJ] msg {msg_idx} id: {id(msg)}")
+                print(f"[TOKENIZE_TRAJ] msg {msg_idx} keys: {list(msg.keys())}")
+                print(f"[TOKENIZE_TRAJ] msg {msg_idx} has logprobs: {'logprobs' in msg}")
+                if 'logprobs' in msg:
+                    print(f"[TOKENIZE_TRAJ] msg {msg_idx} logprobs truthy: {bool(msg['logprobs'])}")
     # Find the index of the last assistant message
     last_assistant_index = -1
     print(f"[TOKENIZE FIRST LOOP] Checking {len(history.messages_and_choices)} messages")
