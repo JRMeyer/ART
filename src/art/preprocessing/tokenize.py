@@ -76,13 +76,7 @@ def tokenize_trajectory_groups(
                 print(f"[TOKENIZE_GROUPS] Group {group_idx} Traj {traj_idx}: SKIPPED (advantage=0)")
                 continue
             trajectory_results: list[TokenizedResult] = []
-            for history in [
-                History(
-                    messages_and_choices=trajectory.messages_and_choices,
-                    tools=trajectory.tools,
-                ),
-                *trajectory.additional_histories,
-            ]:
+            for history in [trajectory, *trajectory.additional_histories]:
                 if result := tokenize_trajectory(
                     tokenizer,
                     image_processor,
