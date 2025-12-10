@@ -28,6 +28,7 @@ class PydanticException(pydantic.BaseModel):
 
 
 class History(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(extra='allow')
     messages_and_choices: MessagesAndChoices
     tools: Tools | None = None
 
@@ -36,6 +37,7 @@ class History(pydantic.BaseModel):
 
 
 class Trajectory(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(extra='allow')
     messages_and_choices: MessagesAndChoices
     tools: Tools | None = None
     additional_histories: list[History] = []
