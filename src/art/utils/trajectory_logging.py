@@ -63,14 +63,14 @@ def trajectory_to_dict(trajectory: Trajectory) -> dict[str, Any]:
 
 def message_or_choice_to_dict(message_or_choice: MessageOrChoice) -> dict[str, Any]:
     # messages are sometimes stored as dicts, so we need to handle both cases
+    # IMPORTANT: Must copy dicts to avoid mutating the original (which strips logprobs needed for training)
     item_dict = (
-        message_or_choice
+        dict(message_or_choice)
         if isinstance(message_or_choice, dict)
         else message_or_choice.to_dict()
     )
 
     if "logprobs" in item_dict:
-        # item is a choice with logprobs, remove the logprobs
         item_dict.pop("logprobs")
 
     if "content" in item_dict and isinstance(item_dict["content"], Iterator):
